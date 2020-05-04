@@ -1,0 +1,49 @@
+version: '3'
+services:
+  ip-locator-nginx:
+    container_name: ip-locator-nginx
+    build:
+      context: ./ip-locator/docker/development
+      dockerfile: nginx.docker
+    volumes:
+      - ./ip-locator:/app
+    depends_on:
+      - ip-locator-php-fpm
+    ports:
+      - "8080:80"   # http
+  
+  ip-locator-php-fpm:
+    container_name: ip-locator-php-fpm
+    build:
+      context: ./ip-locator/docker/development
+      dockerfile: php-fpm.docker
+    volumes:
+      - ./ip-locator:/app
+    depends_on:
+      - ip-locator-postgres
+  
+  ip-locator-php-cli:
+    container_name: ip-locator-php-cli
+    build:
+      context: ./ip-locator/docker/development
+      dockerfile: php-cli.docker
+    volumes:
+      - ./ip-locator:/app
+      - composer:/root/.composer/cache
+    depends_on:
+      - ip-locator-postgres
+  
+  ip-locator-postgres:
+    container_name: ip-locator-postgres
+    image: postgres:11.2-alpine
+    volumes:
+      - ip-locator-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: src
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: src
+    ports:
+      - "54321:5432"
+volumes:
+  ip-locator-postgres:
+  composer:
