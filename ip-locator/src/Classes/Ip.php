@@ -6,7 +6,7 @@ namespace App\Classes;
 
 use http\Exception\InvalidArgumentException;
 
-class Ip
+final class Ip
 {
     private $value;
 
@@ -15,7 +15,7 @@ class Ip
         if (empty($ip)) {
             throw new InvalidArgumentException('Empty Ip');
         }
-        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false ) {
             throw new InvalidArgumentException('Invalid Ip' . $ip);
         }
 

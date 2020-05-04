@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
+use App\Classes\HttpClient;
 use \App\Classes\Locator;
+use \App\Classes\Ip;
 use http\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -12,8 +14,21 @@ class LocatorTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $locator = new Locator();
-        $location = $locator->locate('8.8.8.8');
+        $client = $this->createMock(HttpClient::class);
+
+        $client->method('get')->willReturn(
+            json_encode(
+                [
+                    'country_name' => 'United States',
+                    'state_prov' => 'California',
+                    'city' => 'Mountain View',
+                ]
+            )
+        );
+
+        $locator = new Locator($client, 'fakeApiKey');
+
+        $location = $locator->locate(new Ip('8.8.8.8'));
 
         self::assertNotNull($location);
         self::assertEquals('United States', $location->getCountry());
@@ -21,27 +36,23 @@ class LocatorTest extends TestCase
         self::assertEquals('Mountain View', $location->getCity());
     }
 
-    public function testNotFound() : void
+    public function testNotFound(): void
     {
-        $locator = new Locator();
-        $location = $locator->locate('127.0.0.1');
+        $client = $this->createMock(HttpClient::class);
+
+        $client->method('get')->willReturn(
+            json_encode(
+                [
+                    'country_name' => '-',
+                    'state_prov' => '-',
+                    'city' => '-',
+                ]
+            )
+        );
+        $locator = new Locator($client, 'fakeApiKey');
+
+        $location = $locator->locate(new Ip('127.0.0.1'));
 
         self::assertNull($location);
-    }
-
-    public function testInvalid() : void
-    {
-        $locator = new Locator();
-
-        $this->expectException(InvalidArgumentException::class);
-        $location = $locator->locate('invalid');
-    }
-
-    public function testEmpty() : void
-    {
-        $locator = new Locator();
-
-        $this->expectException(InvalidArgumentException::class);
-        $location = $locator->locate('');
     }
 }

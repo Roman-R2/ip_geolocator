@@ -3,19 +3,32 @@ declare(strict_types=1);
 
 namespace App\Classes;
 
+use http\Exception\RuntimeException;
+
 class Locator
 {
 
+    private $client;
+    private $apiKey;
+
+    //'apiKey' => '98330ba2173741718993e7cbe8024f73',
+    public function __construct(HttpClient $client, string $apiKey)
+    {
+        $this->client = $client;
+        $this->apiKey = $apiKey;
+    }
+
     public function locate(Ip $ip): ?Location
     {
-        $url = 'https://api.ipgeolocation.io/ipgeo' . http_build_query(
+        $url = 'https://api.ipgeolocation.io/ipgeo?' . http_build_query(
                 [
-                    'apiKey' => 'eadc4294d5454b19a8a000f821a88022',
+                    'apiKey' => $this->apiKey,
                     'ip' => $ip->getValue(),
                 ]
             );
 
-        $response = file_get_contents($url);
+        $response = $this->client->get($url);
+
         $data = json_decode($response, true);
         $data = array_map(
             function ($value) {
@@ -30,6 +43,8 @@ class Locator
 
         return new Location($data['country_name'], $data['state_prov'], $data['city']);
     }
+
+
 
 
 }
