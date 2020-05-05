@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
-use \App\Classes\Locator;
+use \App\Classes\IpGeoLocationLocator;
 use \App\Classes\Ip;
 use http\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

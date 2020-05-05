@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace App\Classes;
 
-use http\Exception\RuntimeException;
+use App\Interfaces\Locator;
 
-class Locator
+class IpGeoLocationLocator implements Locator
 {
 
     private $client;
     private $apiKey;
 
-    //'apiKey' => '98330ba2173741718993e7cbe8024f73',
     public function __construct(HttpClient $client, string $apiKey)
     {
         $this->client = $client;
