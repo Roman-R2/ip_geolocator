@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit;
 
 use App\Classes\ChainLocator;
+use App\Classes\ErrorHandler;
 use \App\Classes\Ip;
 use App\Classes\Location;
 use App\Interfaces\Locator;
@@ -16,13 +17,15 @@ class ChainLocatorTest extends TestCase
     {
         $locators = [
             $this->mockLocator(null),
-            $this->mockLocator($expected = new Location('Expected_country', 'Expected_region', 'Expected_city')),
+            $this->mockLocator($expected = new Location('Expected_country', null, 'Expected_city')),
             $this->mockLocator(null),
             $this->mockLocator(new Location('Other', null, null)),
             $this->mockLocator(null)
         ];
 
-        $locator = new ChainLocator(...$locators);
+        $errorHandler = $this->createMock(ErrorHandler::class);
+
+        $locator = new ChainLocator($errorHandler, ...$locators);
         $actual = $locator->locate(new Ip('8.8.8.8'));
 
         self::assertNotNull($actual);

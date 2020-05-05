@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Classes;
-
 
 use App\Interfaces\Locator;
 
@@ -18,9 +18,10 @@ class ChainLocator implements Locator
     public function locate(Ip $ip): ?Location
     {
         $result = null;
-        foreach ($this->locators as $locator){
+        foreach ($this->locators as $locator) {
             $location = $locator->locate($ip);
-            if ($location === null){
+
+            if ($location === null) {
                 continue;
             }
             if ($location->getCity() !== null) {

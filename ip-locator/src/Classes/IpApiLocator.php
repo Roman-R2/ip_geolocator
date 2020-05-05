@@ -17,11 +17,7 @@ class IpApiLocator implements Locator
 
     public function locate(Ip $ip): ?Location
     {
-        $url = 'http://ip-api.com/json/' . http_build_query(
-                [
-                    'ip' => $ip->getValue(),
-                ]
-            );
+        $url = 'http://ip-api.com/json/' . $ip->getValue();
 
         $response = $this->client->get($url);
 
