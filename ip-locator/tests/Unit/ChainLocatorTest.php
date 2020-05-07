@@ -25,7 +25,7 @@ class ChainLocatorTest extends TestCase
 
         $errorHandler = $this->createMock(ErrorHandler::class);
 
-        $locator = new ChainLocator($errorHandler, ...$locators);
+        $locator = new ChainLocator(...$locators);
         $actual = $locator->locate(new Ip('8.8.8.8'));
 
         self::assertNotNull($actual);
